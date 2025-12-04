@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+# Kiedy ma się uruchomić? (Na każdy push do main)
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Pobierz kod z repozytorium
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Zbuduj kontenery używając Docker Compose
+    - name: Build and Start Containers
+      run: docker-compose up -d --build
+
+    # 3. Sprawdź, czy kontenery działają (opcjonalne, dla pewności)
+    - name: Check running containers
+      run: docker ps -a
+
+    # 4. Uruchom testy WEWNĄTRZ kontenera aplikacji
+    # To kluczowy moment - używamy środowiska Dockerowego do testów
+    - name: Run Tests inside Docker
+      run: docker-compose exec -T app npm test
+
+    # 5. Posprzątaj po sobie
+    - name: Tear down
+      run: docker-compose down
