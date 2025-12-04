@@ -27,8 +27,8 @@ jobs:
     # 4. Uruchom testy WEWNĄTRZ kontenera aplikacji
     # To kluczowy moment - używamy środowiska Dockerowego do testów
     - name: Run Tests inside Docker
-      run: docker-compose exec -T app npm test
+      run: docker compose exec -T app npm test
 
     # 5. Posprzątaj po sobie
     - name: Tear down
-      run: docker-compose down
+      run: docker compose down
