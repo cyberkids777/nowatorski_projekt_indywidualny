@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # Nasza aplikacja Node.js
+  app:
+    build: .             # Buduj z Dockerfile w tym katalogu
+    ports:
+      - "3000:3000"      # Mapuj port 3000 hosta na 3000 kontenera
+    depends_on:
+      - mongo            # Czekaj aż baza wstanie (teoretycznie)
+    environment:
+      - WAIT_HOSTS=mongo:27017
+
+  # Baza danych MongoDB
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"    # Opcjonalne: jeśli chcesz łączyć się z bazą z komputera
+    volumes:
+      - mongo-data:/data/db # Trwałość danych (żeby nie znikały po restarcie)
+
+volumes:
+  mongo-data:
