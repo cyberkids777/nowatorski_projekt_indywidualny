@@ -21,7 +21,10 @@ W głównym katalogu projektu wykonaj:
 ```bash
 docker compose up -d --build
 ```
+
+```bash
 curl http://localhost:3000/tasks
+```
 
 ### 2. Dodawanie taska
 
