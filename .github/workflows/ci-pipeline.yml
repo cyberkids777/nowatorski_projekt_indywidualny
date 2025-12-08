@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # --- JOB 1: Testy (Standardowo) ---
+  # 1. Testy
   tests:
     runs-on: ubuntu-latest
     steps:
@@ -15,19 +15,33 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - run: npm install --prefix app # --prefix bo package.json jest w podfolderze
+      - run: npm install --prefix app
+      # - run: npm test --prefix app  <-- odkomentuj jak będziesz miał testy
 
-  # --- JOB 2: Budowanie (Użycie Reusable Workflow) ---
+  # 2. Budowanie (Reusable Workflow - wymóg na 4.5)
   deploy-image:
     name: Call Docker Build
     needs: tests
-    # Uruchom tylko na branchu main (nie na PR), bo reusable workflow robi "push: true"
-    if: github.event_name == 'push' 
-    
-    # TU DZIEJE SIĘ MAGIA (Wymóg na 4.5):
+    if: github.event_name == 'push'
     uses: ./.github/workflows/reusable-docker.yml
     with:
       image_name: todo-app
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  # 3. Twoja Własna Akcja (Wymóg na 5.0)
+  summary:
+    name: Final Summary
+    needs: [tests, deploy-image]
+    if: always()  # Uruchom zawsze, nawet jak testy padną!
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # Potrzebne, żeby widzieć folder .github/actions
+      
+      - name: Run My Custom Action
+        # Tu wskazujemy ścieżkę do Twojego folderu
+        uses: ./.github/actions/report-status
+        with:
+          status: ${{ needs.tests.result }} # Przekazujemy wynik testów
+          author: ${{ github.actor }}       # Przekazujemy nazwę usera

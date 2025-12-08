@@ -1,0 +1,32 @@
+name: 'Custom Build Report'
+description: 'Wypisuje ladne podsumowanie statusu pipelineu'
+inputs:
+  status:
+    description: 'Status poprzednich krokow (success/failure)'
+    required: true
+    default: 'neutral'
+  author:
+    description: 'Osoba ktora uruchomila pipeline'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Print Summary
+      shell: bash
+      run: |
+        echo "=========================================="
+        echo "   🚀 PROJECT BUILD SUMMARY 🚀"
+        echo "=========================================="
+        echo "👤 Triggered by: ${{ inputs.author }}"
+        
+        if [ "${{ inputs.status }}" == "success" ]; then
+          echo "✅ STATUS: SUCCESS - Dobra robota!"
+          echo "   Aplikacja zostala zbudowana poprawnie."
+        else
+          echo "❌ STATUS: FAILURE - Cos poszlo nie tak."
+          echo "   Sprawdz logi powyzej, zeby naprawic blad."
+        fi
+        
+        echo "📅 Date: $(date)"
+        echo "=========================================="
