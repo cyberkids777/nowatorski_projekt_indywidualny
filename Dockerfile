@@ -1,20 +1,32 @@
-# Używamy lekkiego obrazu Node.js
-FROM node:18-alpine
+# ============================
+# STAGE 1: Budowanie (Builder)
+# ============================
+FROM node:18-alpine AS builder
 
-# Ustawiamy katalog roboczy wewnątrz kontenera
+# Ustawiamy katalog roboczy
 WORKDIR /usr/src/app
 
-# Kopiujemy pliki package.json (żeby zainstalować zależności)
+# Kopiujemy package.json (z folderu app, tak jak miałeś)
 COPY app/package.json ./
 
-# Instalujemy zależności
+# Instalujemy WSZYSTKIE zależności (w tym te potrzebne tylko do budowania)
 RUN npm install
 
-# Kopiujemy resztę kodu aplikacji
+# Kopiujemy kod źródłowy
 COPY app/ .
 
-# Otwieramy port, na którym działa aplikacja
+# ============================
+# STAGE 2: Uruchamianie (Production)
+# ============================
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
+# Kopiujemy TYLKO node_modules i kod z etapu 'builder'
+# To jest kluczowy moment dla multi-stage build
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/ .
+
 EXPOSE 3000
 
-# Komenda startowa
 CMD ["node", "server.js"]
