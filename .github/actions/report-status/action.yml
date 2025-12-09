@@ -16,17 +16,17 @@ runs:
       shell: bash
       run: |
         echo "=========================================="
-        echo "   🚀 PROJECT BUILD SUMMARY 🚀"
+        echo "        "PROJECT BUILD SUMMARY"
         echo "=========================================="
-        echo "👤 Triggered by: ${{ inputs.author }}"
+        echo "Triggered by: ${{ inputs.author }}"
         
         if [ "${{ inputs.status }}" == "success" ]; then
-          echo "✅ STATUS: SUCCESS - Dobra robota!"
-          echo "   Aplikacja zostala zbudowana poprawnie."
+          echo "STATUS: SUCCESS - Dobra robota!"
+          echo " Aplikacja zostala zbudowana poprawnie."
         else
-          echo "❌ STATUS: FAILURE - Cos poszlo nie tak."
-          echo "   Sprawdz logi powyzej, zeby naprawic blad."
+          echo "STATUS: FAILURE - Cos poszlo nie tak."
+          echo "Sprawdz logi powyzej, zeby naprawic blad."
         fi
         
-        echo "📅 Date: $(date)"
+        echo "Date: $(date)"
         echo "=========================================="
